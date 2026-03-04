@@ -1,5 +1,7 @@
 
 using System;
+using System.Drawing;
+using System.Reflection.Metadata.Ecma335;
 public class Puzzle_Generator
 {
     public static void Main(string[] args)
@@ -8,27 +10,27 @@ public class Puzzle_Generator
         int PUZZLE_HEIGHT = 10;
         
         
-         char[,] thisPuzzle = new char[PUZZLE_HEIGHT,PUZZLE_WIDTH];
+        
          
-            createPuzzle(thisPuzzle, PUZZLE_HEIGHT,PUZZLE_WIDTH);
-
-            fillPuzzle(thisPuzzle, PUZZLE_HEIGHT,PUZZLE_WIDTH,3);
-            
-
-        for(int i = 0; i < PUZZLE_HEIGHT ; i++)
+         for(int index = 0; index < 3; index ++)
         {
-            for(int j = 0; j < PUZZLE_WIDTH ; j++)
+            char[,] thisPuzzle = new char[PUZZLE_HEIGHT,PUZZLE_WIDTH];
+            createPuzzle(thisPuzzle, PUZZLE_HEIGHT,PUZZLE_WIDTH);
+            fillPuzzle(thisPuzzle, PUZZLE_HEIGHT,PUZZLE_WIDTH,2);
+            printPuzzle(thisPuzzle, PUZZLE_HEIGHT,PUZZLE_WIDTH);
+        }
+    }
+    public static void printPuzzle(char[,]array, int height, int width)
+    {
+        for(int i = 0; i < height; i++)
+        {
+            for(int j = 0; j < width ; j++)
             {
-                Console.Write(thisPuzzle[i,j]);
+                Console.Write(array[i,j]);
             }
             Console.WriteLine();    
         }
-        
-
-
-
-
-        
+        Console.WriteLine();
     }
     public static void createPuzzle(char[,]array ,int height, int width)
     {
@@ -55,18 +57,30 @@ public class Puzzle_Generator
        
         int playerX = random.Next(1,width -1);
         int playerY = random.Next(1,height -1);
-
-        if(playerY == randomWallY) // make sure player is not on the wall
+        int playerSide; 
+        
+        while(playerY == randomWallY) // make sure player is not on the wall
         {
             playerY = random.Next(1,height -1);
         }
-        Console.WriteLine(width+ " " + height);
-        Console.WriteLine(randomWallY);
-        Console.WriteLine(randomDoorX);
+        // test which side player spawns on
+        if(playerY > randomWallY)
+        {
+            playerSide = 1;
+        }
+        else
+        {
+            playerSide = -1;
+        }
+        // Console.WriteLine(width+ " " + height);
+        // Console.WriteLine(randomWallY);
+        // Console.WriteLine(randomDoorX);
        
-        Console.WriteLine(playerX);
-        Console.WriteLine(playerY);
-        for(int i = 1; i < width -1; i++) // build random wall with a door
+        // Console.WriteLine(playerX);
+        // Console.WriteLine(playerY);
+        
+        /// build random wall with a door
+        for(int i = 1; i < width -1; i++) 
         {
             if(i == randomDoorX)
             {
@@ -78,25 +92,51 @@ public class Puzzle_Generator
             }
            
         }
-        array[playerY,playerX] = '@'; // place player
-
-        int switchX = random.Next(1, width -1); 
-        int switchY = random.Next(1, height-1);
+        // place player
+        array[playerY,playerX] = '@'; 
         
-        if(playerY > randomWallY)
+
+        // place switches in the room with the player
+        for(int i = 0; i < switchCount; i++)
         {
-            while(switchY < randomWallY) // keep generating switch unti in same room as player
+            int switchX = random.Next(1, width -1); 
+            int switchY = random.Next(1, height-1);
+            int boxX = random.Next(1,width -1);
+            int boxY = random.Next(1,height - 1);
+            while(switchY == randomWallY)
+            {
+                switchY = random.Next(1, height-1);
+            }
+        if(playerSide == 1)
+        {
+            while(switchY < randomWallY) // keep generating switch until in same room as player
             {
                 switchY = random.Next(1, height -1);
             }
+            while(boxY < randomWallY) // keep generating box until in same room as player
+            {
+                boxY = random.Next(1, height -1);
+            }
         }
-        else if(playerY < randomWallY)
+        else if(playerSide == -1)
         {
             while(switchY > randomWallY) // keep generating switch unti in same room as player
             {
                 switchY = random.Next(1, height -1);
             }
+            while(boxY > randomWallY) // keep generating switch unti in same room as player
+            {
+                boxY = random.Next(1, height -1);
+            }
         }   
+        while(array[boxY, boxX]!= ' ')
+        {
+            boxX = random.Next(1, width -1);
+            boxY = random.Next(1, height -1);
+        }
+        array[boxY, boxX] = 'B';
         array[switchY,switchX] = 'S';
+        }
     }
+    
 }
