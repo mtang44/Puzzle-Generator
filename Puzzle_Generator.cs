@@ -1,5 +1,6 @@
 
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Reflection.Metadata.Ecma335;
 public class Puzzle_Generator
@@ -12,12 +13,18 @@ public class Puzzle_Generator
         
         
          
-         for(int index = 0; index < 3; index ++)
+         for(int index = 1; index < 11; index ++)
         {
+           
+            Random rand = new Random();
+            int randomBoxCount = rand.Next(1,4);
+            Console.WriteLine("Generating Puzzle #" + index + " with " + randomBoxCount + " boxes");
+            Console.WriteLine();
             char[,] thisPuzzle = new char[PUZZLE_HEIGHT,PUZZLE_WIDTH];
             createPuzzle(thisPuzzle, PUZZLE_HEIGHT,PUZZLE_WIDTH);
-            fillPuzzle(thisPuzzle, PUZZLE_HEIGHT,PUZZLE_WIDTH,2);
+            fillPuzzle(thisPuzzle, PUZZLE_HEIGHT,PUZZLE_WIDTH,randomBoxCount);
             printPuzzle(thisPuzzle, PUZZLE_HEIGHT,PUZZLE_WIDTH);
+
         }
     }
     public static void printPuzzle(char[,]array, int height, int width)
